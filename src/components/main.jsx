@@ -2,13 +2,21 @@ import React from "react";
 import { MdSwapVerticalCircle } from "react-icons/md";
 import { ethers } from "ethers";
 import { useState, useEffect } from "react";
-import { Alchemy } from "alchemy-sdk";
+import { Alchemy, Network } from "alchemy-sdk";
 
 const Main = () => {
   const [account, setAccount] = useState(null);
   const [connected, setConnected] = useState(false);
   const [tokenList, setTokenList] = useState([]);
+  const [ownerTokens, setOwnerToken] = useState([])
   const { ethereum } = window;
+
+  const config = {
+    apiKey: process.env.ALCHEMY_GOERLI_APIKEY,
+    network: Network.ETH_GOERLI,
+  };
+
+  const alchemy = new Alchemy(config);
 
   const connectWallet = async () => {
     if (typeof ethereum == "undefined") return alert("please install metamask");
@@ -23,9 +31,11 @@ const Main = () => {
       console.log(error);
     }
   };
-  // const options = tokenList.map((token) => {
-  // token.symbol
-  // })
+
+  const getOwnertokens = async () => {
+     
+  }
+
   const getListOfTokens = async () => {
     const listResult = await fetch(
       "https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json"
@@ -61,20 +71,18 @@ const Main = () => {
         <div className="bg-slate-600 w-fit mb-2 pb-8 p-2 rounded-md">
           <label for="from-tokens">you pay</label>
           <div className="flex p-3 flex-row">
-            <div className="flex flex-col">
-              <p>select token </p>
-              <ul className="absolute mt-16">
-                <li>eeee</li>
-                <li>eeee</li>
-                <li>eeee</li>
-                <li>eeee</li>
-              </ul>
-            </div>
+           
+            <select className="text-xl p-2 bg-slate-600" name="tokens_to_swap" id="from-tokens">
+             {
+              tokenList.map((token) => (
+                <option>{token.symbol}</option>
+              ))
+             }
+            </select>
+            
             <div>
-               <input className="ml-7" type="number" />
+              <input className="ml-7 w-max rounded-md p-2 text-white text-center bg-black" type="number"/>
             </div>
-           
-           
           </div>
         </div>
         <div className="absolute mb-20">
@@ -84,11 +92,17 @@ const Main = () => {
         <div className="bg-slate-600 pt-8 w-fit p-2 rounded-lg">
           <label for="to-tokens">you recieve</label>
           <div className="flex p-3  flex-row">
-            <select name="tokens to swap" id="to-tokens">
-              <option>tokens</option>
-              <option>polygon</option>
+          <select className="text-xl p-2 bg-slate-600" name="tokens_to_swap" id="from-tokens">
+             {
+              tokenList.map((token) => (
+                <option>{token.symbol}</option>
+              ))
+             }
             </select>
-            <input className="ml-4" type="number" />
+            
+            <div>
+              <input className="ml-7 w-max rounded-md p-2 text-white text-center bg-black" type="number"/>
+            </div>
           </div>
         </div>
         <p className="mt-2"> Estimated Gas:</p>
