@@ -19,7 +19,7 @@ const Main = () => {
   const [target, setTarget] = useState("");
   const [sellTokenAddress, setSellerAddress] = useState("");
   const [value, setValue] = useState(null);
-  const [getBuyDecimal, setBuyDecimal] = useState(null)
+  const [getBuyDecimal, setBuyDecimal] = useState(null);
 
   const { ethereum } = window;
 
@@ -47,10 +47,10 @@ const Main = () => {
       }
     });
     tokenList.forEach((element) => {
-      if(element.symbol == toSelectValue) {
-        setBuyDecimal(element.decimals)
+      if (element.symbol == toSelectValue) {
+        setBuyDecimal(element.decimals);
       }
-    })
+    });
     if (!fromselectValue) {
       console.log("fill from input");
     } else if (!toSelectValue) {
@@ -65,7 +65,7 @@ const Main = () => {
           }`
         );
         const response = await price.json();
-        console.log(response);
+        //console.log(response);
         setPrice(response.buyAmount / 10 ** getBuyDecimal);
         setGasEstimate(response.estimatedGas);
         setTarget(response.allowanceTarget);
@@ -106,7 +106,7 @@ const Main = () => {
       const erc20 = new ethers.Contract(sellTokenAddress, abi, signer);
       const approveSwap = await erc20.approve(target, value);
       const receipt = await approveSwap.wait(1);
-      console.log(receipt);
+      //console.log(receipt);
 
       const quote = await getQuote(account);
 
@@ -115,7 +115,7 @@ const Main = () => {
         to: quote.to,
         data: quote.data,
         value: ethers.BigNumber.from(quote.value || 0),
-        gasPrice: ethers.BigNumber.from(quote.gasPrice + (quote.gasPrice)/2 ),
+        gasPrice: ethers.BigNumber.from(quote.gasPrice + quote.gasPrice / 2),
         gasLimit: ethers.BigNumber.from(quote.gas),
       });
       const txReceipt = await txResponse.wait();
@@ -133,7 +133,7 @@ const Main = () => {
         headers: {
           Accept: "application/json",
           "X-API-Key":
-            "Yvt7aRhi4PGL6TgEDwk05JGlNNWMNo1xvbGckDsX2EXfVOnC2Knj16L00mdwWZaL",
+            process.env.MORALIS_API_KEY,
         },
       };
 
@@ -149,14 +149,23 @@ const Main = () => {
     }
   };
 
+  const getMaxAmount = async () => {
+    ownerTokens.forEach( async (element) => {
+      if (element.symbol == fromselectValue) {
+       const balance = (element.balance) / 10 ** element.decimals
+       setInputValue(balance)
+      }
+    })
+  }
+
   const getListOfTokens = async () => {
     const listResult = await fetch(
       "https://raw.githubusercontent.com/compound-finance/token-list/master/compound.tokenlist.json"
     );
     const response = await listResult.json();
-    
+
     const data = response.tokens;
-    console.log(data)
+    //console.log(data);
     setTokenList(data);
 
     // console.log(data);
@@ -168,14 +177,18 @@ const Main = () => {
   }, [account]);
 
   useEffect(() => {
-    if (inputValue !== null || toSelectValue !== "default" || fromselectValue !== "default") {
+    if (
+      inputValue !== null ||
+      toSelectValue !== "default" ||
+      fromselectValue !== "default"
+    ) {
       getPrice();
       // getQuote(account);
     }
-  }, [inputValue, toSelectValue, fromselectValue ]);
+  }, [inputValue, toSelectValue, fromselectValue]);
 
   return (
-    <div className="flex flex-col justify-center items-center" >
+    <div className="flex flex-col justify-center items-center">
       <button
         className="border-4 border-indigo-200 text-xl mt-24 p-2"
         onClick={connectWallet}
@@ -213,12 +226,13 @@ const Main = () => {
                 <option value={token.symbol}>{token.symbol}</option>
               ))}
             </select>
-            <button className="w-fit h-fit mt-2 ml-2 bg-blue-700">MAX</button>
+            <button className="w-fit h-fit mt-2 ml-2 bg-blue-700" onClick={() => getMaxAmount()} >MAX</button>
 
             <div>
               <input
                 className="ml-4 w-max rounded-md p-2 text-white text-center bg-black"
                 type="number"
+                value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
             </div>

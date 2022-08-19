@@ -8,7 +8,7 @@ module.exports = {
     hardhat : {
       chainId:31337,
       forking : {
-        url : "https://eth-mainnet.g.alchemy.com/v2/E5J16OtBss4K3ynCdpFxLjkmdRQQsfmt",
+        url : process.env.ALCHEMY_MAINNET_URL,
         blockNumber:15367861, //
       }
     },
