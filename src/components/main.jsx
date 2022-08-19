@@ -2,7 +2,6 @@ import React from "react";
 import { MdSwapVerticalCircle } from "react-icons/md";
 import { ethers } from "ethers";
 import { useState, useEffect } from "react";
-//import { Alchemy, Network } from "alchemy-sdk";
 import abi from "./constants/erc20abi.json";
 
 const Main = () => {
@@ -126,14 +125,12 @@ const Main = () => {
   };
 
   const getOwnertokens = async () => {
-    let tokens = [];
     try {
       const options = {
         method: "GET",
         headers: {
           Accept: "application/json",
-          "X-API-Key":
-            process.env.MORALIS_API_KEY,
+          "X-API-Key": process.env.MORALIS_API_KEY,
         },
       };
 
@@ -150,13 +147,13 @@ const Main = () => {
   };
 
   const getMaxAmount = async () => {
-    ownerTokens.forEach( async (element) => {
+    ownerTokens.forEach(async (element) => {
       if (element.symbol == fromselectValue) {
-       const balance = (element.balance) / 10 ** element.decimals
-       setInputValue(balance)
+        const balance = element.balance / 10 ** element.decimals;
+        setInputValue(balance);
       }
-    })
-  }
+    });
+  };
 
   const getListOfTokens = async () => {
     const listResult = await fetch(
@@ -226,7 +223,12 @@ const Main = () => {
                 <option value={token.symbol}>{token.symbol}</option>
               ))}
             </select>
-            <button className="w-fit h-fit mt-2 ml-2 bg-blue-700" onClick={() => getMaxAmount()} >MAX</button>
+            <button
+              className="w-fit h-fit mt-2 ml-2 bg-blue-700"
+              onClick={() => getMaxAmount()}
+            >
+              MAX
+            </button>
 
             <div>
               <input
