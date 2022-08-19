@@ -2,14 +2,14 @@
 const { Alchemy, Network } = require("alchemy-sdk");
 
 const config = {
-  apiKey: "E5J16OtBss4K3ynCdpFxLjkmdRQQsfmt",
-  network: Network.ETH_MAINNET,
+  apiKey: process.env.ALCHEMY_GOERLI_APIKEY,
+  network: Network.ETH_GOERLI,
 };
 const alchemy = new Alchemy(config);
 
 const main = async () => {
   // Wallet address
-  const address = "0x5a52e96bacdabb82fd05763e25335261b270efcb";
+  const address = "0x12114765eeA16473363682Cf832F5603BB8f6110";
 
   // Get token balances
   const balances = await alchemy.core.getTokenBalances(address);
